@@ -6,3 +6,4 @@
 # 5. 저장한 데이터 Select
 # 6. pandas를 이용해서 테이블 화(into DataFrame)시킨다.
 # 7. 테이블 화 시킨 데이터들(= DataFrame)을 csv로 변환(into csv)
+# 8. 변환한 csv 파일을 Display 파트로 보내기
