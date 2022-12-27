@@ -1,5 +1,6 @@
 import pymysql
 import connectionInfo
+import pandas as pd
 
 # 기본 connect
 # conn = pymysql.connect(
@@ -20,19 +21,19 @@ conn = connectionInfo.connections['conn1']
 cur = conn.cursor()
 
 
-# def __init__(cur):  # 초기화
-#     qry1 = "CREATE TABLE Movement (Acc INT, Gyro INT) IF NOT EXISTS Movement"
-#     qry2 = "CREATE TABLE Pulse (Pulse INT) IF NOT EXISTS Pulse"
-#     qry3 = "CREATE TABLE Breath (Breath INT) IF NOT EXISTS Breath"
-#     qry4 = "CREATE TABLE Temp (Temp INT) IF NOT EXISTS Temp"
-#     totalQry = """
-#         CREATE TABLE Movement (Acc INT, Gyro INT) IF NOT EXISTS Movement CREATE TABLE Pulse (Pulse INT) IF NOT EXISTS Pulse CREATE TABLE Breath (Breath INT) IF NOT EXISTS Breath CREATE TABLE Temp (Temp INT) IF NOT EXISTS Temp
-#     """
-#     cur.execute(totalQry)
-    # cur.execute(qry1)
-    # cur.execute(qry2)
-    # cur.execute(qry3)
-    # cur.execute(qry4)
+def __init__(cur):  # 초기화
+    qry1 = "CREATE TABLE Movement (Acc INT, Gyro INT) IF NOT EXISTS Movement"
+    qry2 = "CREATE TABLE Pulse (Pulse INT) IF NOT EXISTS Pulse"
+    qry3 = "CREATE TABLE Breath (Breath INT) IF NOT EXISTS Breath"
+    qry4 = "CREATE TABLE Temp (Temp INT) IF NOT EXISTS Temp"
+    totalQry = """
+        CREATE TABLE Movement (Acc INT, Gyro INT) IF NOT EXISTS Movement CREATE TABLE Pulse (Pulse INT) IF NOT EXISTS Pulse CREATE TABLE Breath (Breath INT) IF NOT EXISTS Breath CREATE TABLE Temp (Temp INT) IF NOT EXISTS Temp
+    """
+    cur.execute(totalQry)
+    cur.execute(qry1)
+    cur.execute(qry2)
+    cur.execute(qry3)
+    cur.execute(qry4)
 
 
 def qry_select(cur, tableName):  # select data in field
@@ -84,8 +85,8 @@ def qry_table_check(cur, tableName):  # check Table
 # qry_table_check(cur, "Body1")
 # qry_select(cur, "move")
 # qry_insert(cur, "move", 7, 7)
-# __init__(cur)
-cur.execute("INSERT INTO Move (Acc, Gyro) VALUES (7, 5)")
+# cur.execute("INSERT INTO Move (Acc, Gyro) VALUES (7, 5)")
 
 conn.commit()
 conn.close()
+
