@@ -21,12 +21,11 @@ print(mydf.loc[[0, 1, 2]])
 mydf2= pd.DataFrame(dataSet, index=["day1","day2","day3"])
 print(mydf, mydf2)
 
+
 # Key/Values Objects as Series
 calories = {"day1": 420, "day2": 380, "day3": 390}
 mycal = pd.Series(calories, index=["day1", "day2"])
 
-
-#################################################################################
 
 # csv 읽기
 # to_string() => 전체 Row 보여줌 
@@ -34,13 +33,17 @@ mycal = pd.Series(calories, index=["day1", "day2"])
 df = pd.read_csv('sample.csv')  
 print(df.to_string())
 
+
 # info() => data set의 정보를 가져옴 (행, 열, 인덱스, 값 ...)
 print(df.info())
+
 
 # head() => 인자 지정 안하면 처음부터 5개 행 가져옴
 # tail() => head()와 마찬가지, 단 마지막부터 ...
 print(df.head())
 
+
 # dataframe to csv
 t = df.to_csv("sample3.csv")
 print(t)
+
