@@ -1,5 +1,5 @@
-# Database_Handling
-데이터베이스 - 데이터 조작, 저장
+# Database_Handling 파트
+데이터베이스 내의 데이터 가공, 저장, 전송 기능 담당.
 
 # Requirements Library
 - pymysql
