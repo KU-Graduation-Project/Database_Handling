@@ -1,6 +1,10 @@
+import random
 import pymysql
 import connectionInfo
 import pandas as pd
+import threading
+import time
+from queue import Queue, Empty, Full
 
 # 기본 connect
 # conn = pymysql.connect(
@@ -12,6 +16,7 @@ import pandas as pd
 
 # connection 생성
 conn = connectionInfo.connections['conn1']
+# conn2 = connectionInfo.connections['conn2']
 
 # 밑 처럼 해도 작동
 # conn.select_db('data1')
@@ -19,7 +24,6 @@ conn = connectionInfo.connections['conn1']
 
 # 커서 획득
 cur = conn.cursor()
-
 
 def __init__(cur):  # 초기화
     qry1 = "CREATE TABLE Movement (Acc INT, Gyro INT) IF NOT EXISTS Movement"
@@ -86,6 +90,69 @@ def qry_table_check(cur, tableName):  # check Table
 # qry_select(cur, "move")
 # qry_insert(cur, "move", 7, 7)
 # cur.execute("INSERT INTO Move (Acc, Gyro) VALUES (7, 5)")
+
+
+send_queue = Queue()
+done = False
+lock = threading.Lock()
+dataSet = {
+    'pulse': [],
+}
+exDf = None
+
+def make_data_ex(t, datalist):
+    # global send_queue
+    global done
+    # threading.Timer(time, make_data_ex, [1, datalist]).start()
+    # x = [random.randint(0, 100) for _ in range(30)]
+    # datalist.put(x)
+    # save_data_ex(datalist)
+    
+    for _ in range(t):
+        random_data = random.randint(0, 100)
+        print("make_data \n", random_data)
+        # lock.acquire()
+        send_queue.put(random_data)
+        time.sleep(2)
+        # lock.release()
+    send_queue.join()
+    done = True
+    
+
+def save_data_ex(datalist):
+    # global send_queue
+    while True:
+        try:   
+            # lock.acquire()
+            get_data = send_queue.get(timeout=5)
+            print("save_data \n", get_data)
+            sql = "INSERT INTO tmp_table (temp) values (%s)"
+            cur.execute(sql, get_data)
+            dataSet['pulse'].append(get_data)
+            time.sleep(2)
+            # lock.release()
+            send_queue.task_done()
+        except Empty:
+            # 문제 - 마지막 데이터까지 save 한 뒤, 종료까지 딜레이가 존재
+            if done: 
+                pd.DataFrame(dataSet).to_csv("sample_thread_csv.csv")
+                break
+            else: continue
+    
+    
+
+if __name__ == "__main__":
+    threads = []
+    t1 = threading.Thread(target=make_data_ex, args=(7, send_queue,))
+    t1.start()
+    threads.append(t1)
+
+    t2 = threading.Thread(target=save_data_ex, args=(send_queue,))
+    t2.start()
+    threads.append(t2)
+    
+    for t in threads:
+        t.join()
 
 conn.commit()
 conn.close()
