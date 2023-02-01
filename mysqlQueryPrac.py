@@ -91,11 +91,15 @@ def qry_table_check(cur, tableName):  # check Table
 # qry_insert(cur, "move", 7, 7)
 # cur.execute("INSERT INTO Move (Acc, Gyro) VALUES (7, 5)")
 
-
 send_queue = Queue()
+send_queue2 = Queue()
+client_key = -1
 done = False
 lock = threading.Lock()
 dataSet = {
+    'pulse': [],
+}
+dataSet2 = {
     'pulse': [],
 }
 exDf = None
@@ -109,37 +113,63 @@ def make_data_ex(t, datalist):
     # save_data_ex(datalist)
     
     for _ in range(t):
+        global client_key
+        client_key = random.randint(1, 2)
         random_data = random.randint(0, 100)
-        print("make_data \n", random_data)
         # lock.acquire()
-        send_queue.put(random_data)
+        if client_key == 1:
+            print("make_data to 1 ", random_data)
+            send_queue.put(random_data)
+        elif client_key == 2:
+            print("make_data to 2 ", random_data)
+            send_queue2.put(random_data)
         time.sleep(2)
         # lock.release()
     send_queue.join()
+    send_queue2.join()
     done = True
     
 
 def save_data_ex(datalist):
     # global send_queue
+    global client_key
     while True:
         try:   
             # lock.acquire()
-            get_data = send_queue.get(timeout=5)
-            print("save_data \n", get_data)
-            sql = "INSERT INTO tmp_table (temp) values (%s)"
-            cur.execute(sql, get_data)
-            dataSet['pulse'].append(get_data)
+            get_data = None
+            sql = ""
+            if client_key == 1:
+                conn = connectionInfo.connections['conn1']
+                cur = conn.cursor();
+                get_data = send_queue.get(timeout=2)
+                print("save_data to 1 ", get_data)
+                sql = "INSERT INTO tmp_table (temp) values (%s)"
+                dataSet['pulse'].append(get_data)
+                cur.execute(sql, get_data)
+                send_queue.task_done()
+            elif client_key == 2:
+                conn = connectionInfo.connections['conn2']
+                cur = conn.cursor();
+                get_data = send_queue2.get(timeout=2)
+                print("save_data to 2 ", get_data)
+                sql = "INSERT INTO tmp_table (temp) values (%s)"
+                dataSet2['pulse'].append(get_data)
+                cur.execute(sql, get_data)
+                send_queue2.task_done()            
+            # sql = "INSERT INTO tmp_table (temp) values (%s)"
+            # cur.executemany(sql, list(send_queue.queue))
             time.sleep(2)
             # lock.release()
-            send_queue.task_done()
+            
         except Empty:
             # 문제 - 마지막 데이터까지 save 한 뒤, 종료까지 딜레이가 존재
             if done: 
-                pd.DataFrame(dataSet).to_csv("sample_thread_csv.csv")
+                pd.DataFrame(dataSet).to_csv("sample1.csv")
+                pd.DataFrame(dataSet2).to_csv("sample2.csv")
+                conn.commit()
+                conn.close()
                 break
             else: continue
-    
-    
 
 if __name__ == "__main__":
     threads = []
@@ -153,6 +183,3 @@ if __name__ == "__main__":
     
     for t in threads:
         t.join()
-
-conn.commit()
-conn.close()

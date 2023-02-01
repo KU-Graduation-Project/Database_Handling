@@ -9,7 +9,7 @@ CHARSET = 'utf8'
 # connection 객체
 connections = {
     'conn1': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data1', charset=CHARSET, client_flag=CLIENT.MULTI_STATEMENTS), # 클라이언트 1
-    # 'conn2': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data2', charset=CHARSET, client_flag=CLIENT.MULTI_STATEMENTS), # 클라이언트 2
+    'conn2': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data2', charset=CHARSET, client_flag=CLIENT.MULTI_STATEMENTS), # 클라이언트 2
     # 'conn3': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data3', charset=CHARSET), # 클라이언트 3
     # 'conn4': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data4', charset=CHARSET), # 클라이언트 4
     # 'conn5': pymysql.connect(host=HOST, user=USER, passwd=PSWD, database='data5', charset=CHARSET), # 클라이언트 5

@@ -14,6 +14,7 @@ dataSet = {
 dataSet['cars'].append("Hyundai")
 dataSet['passings'].append('99')
 mydf = pd.DataFrame(dataSet)
+print(mydf)
 # print(mydf)
 # loc => Locate Row => 특정 행을 가져올 수 있음
 # print(mydf.loc[[0, 1, 2]])
@@ -32,7 +33,7 @@ mycal = pd.Series(calories, index=["day1", "day2"])
 # csv 읽기
 # to_string() => 전체 Row 보여줌 
 # 그냥 print는 가져오긴 하는데 너무 많은 데이터가 있다면 중간 생략
-df = pd.read_csv('sample.csv')  
+df = pd.read_csv('sample.csv')
 # print(df.to_string())
 
 
