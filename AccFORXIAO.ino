@@ -93,8 +93,8 @@ void BLELoop() {
 }
 
 void BLESetup() {
-  Serial.begin(9600);
-  while (!Serial);
+//   Serial.begin(9600);
+//   while (!Serial);
  
   // set LED pin to output mode
   pinMode(ledPin, OUTPUT);
